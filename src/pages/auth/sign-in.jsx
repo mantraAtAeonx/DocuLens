@@ -7,19 +7,43 @@ import {
   Typography,
 } from "@material-tailwind/react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import toast from "react-hot-toast";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+import { setLoading, setUserData } from "../../redux/slices/authSlice";
 
 export function SignIn() {
+  const navigate = useNavigate();
   const [loginCreds, setLoginCreds] = useState({
     email: "",
     password: "",
   });
-  const handleSubmit = (e) => {
+  const { loading } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setLoginCreds((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    apiConnector("POST", "/login");
+    dispatch(setLoading(true));
+    await apiConnector("POST", "/login", loginCreds)
+      .then((res) => {
+        toast.success("Logged In Successfully!");
+        navigate("/dashboard/home");
+        localStorage.setItem("token", res.token);
+        dispatch(setUserData(res));
+      })
+      .catch((error) => {
+        toast.error(error.response.data.detail);
+      });
+    dispatch(setLoading(false));
   };
   return (
-    <section className="flex gap-">
+    <section className="flex gap-1">
       <div className="w-7/12 mx-auto mt-24">
         <div className="text-center">
           <Typography variant="h2" className="font-bold mb-4">
@@ -48,10 +72,12 @@ export function SignIn() {
             <Input
               size="lg"
               placeholder="name@mail.com"
+              name="email"
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
+              onChange={handleChange}
             />
             <Typography
               variant="small"
@@ -64,30 +90,14 @@ export function SignIn() {
               type="password"
               size="lg"
               placeholder="********"
+              name="password"
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
               labelProps={{
                 className: "before:content-none after:content-none",
               }}
+              onChange={handleChange}
             />
           </div>
-          <Checkbox
-            label={
-              <Typography
-                variant="small"
-                color="gray"
-                className="flex items-center justify-start font-medium"
-              >
-                I agree the&nbsp;
-                <a
-                  href="#"
-                  className="font-normal text-black transition-colors hover:text-gray-900 underline"
-                >
-                  Terms and Conditions
-                </a>
-              </Typography>
-            }
-            containerProps={{ className: "-ml-2.5" }}
-          />
           <Button type="submit" className="mt-6" fullWidth>
             Sign In
           </Button>

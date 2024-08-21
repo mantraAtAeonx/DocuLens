@@ -8,6 +8,7 @@ import "../public/css/tailwind.css";
 import { configureStore } from "@reduxjs/toolkit";
 import rootReducer from "./redux/reducer";
 import { Provider } from "react-redux";
+import { Toaster } from "react-hot-toast";
 
 const store = configureStore({
   reducer: rootReducer,
@@ -24,5 +25,6 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         </ThemeProvider>
       </BrowserRouter>
     </Provider>
+    <Toaster position="top-right" reverseOrder={false} />
   </React.StrictMode>
 );
