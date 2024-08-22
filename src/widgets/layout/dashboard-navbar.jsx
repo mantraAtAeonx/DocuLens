@@ -1,4 +1,4 @@
-import { useLocation, Link } from "react-router-dom";
+import { useLocation, Link, useNavigate } from "react-router-dom";
 import {
   Navbar,
   Typography,
@@ -25,12 +25,21 @@ import {
   setOpenConfigurator,
   setOpenSidenav,
 } from "@/context";
+import { setToken, setUserData } from "@/redux/slices/authSlice";
 
 export function DashboardNavbar() {
   const [controller, dispatch] = useMaterialTailwindController();
   const { fixedNavbar, openSidenav } = controller;
   const { pathname } = useLocation();
   const [layout, page] = pathname.split("/").filter((el) => el !== "");
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.clear();
+    setToken(null);
+    setUserData(null);
+    navigate("/auth/sign-in");
+  };
 
   return (
     <Navbar
@@ -75,15 +84,15 @@ export function DashboardNavbar() {
           <div className="mr-auto md:mr-4 md:w-56">
             <Input label="Search" />
           </div>
-          <IconButton
+          {/* <IconButton
             variant="text"
             color="blue-gray"
             className="grid xl:hidden"
             onClick={() => setOpenSidenav(dispatch, !openSidenav)}
           >
             <Bars3Icon strokeWidth={3} className="h-6 w-6 text-blue-gray-500" />
-          </IconButton>
-          <Link to="/auth/sign-in">
+          </IconButton> */}
+          {/* <Link to="/auth/sign-in">
             <Button
               variant="text"
               color="blue-gray"
@@ -99,8 +108,8 @@ export function DashboardNavbar() {
             >
               <UserCircleIcon className="h-5 w-5 text-blue-gray-500" />
             </IconButton>
-          </Link>
-          <Menu>
+          </Link> */}
+          {/* <Menu>
             <MenuHandler>
               <IconButton variant="text" color="blue-gray">
                 <BellIcon className="h-5 w-5 text-blue-gray-500" />
@@ -177,14 +186,30 @@ export function DashboardNavbar() {
                 </div>
               </MenuItem>
             </MenuList>
-          </Menu>
-          <IconButton
+          </Menu> */}
+          {/* <IconButton
             variant="text"
             color="blue-gray"
             onClick={() => setOpenConfigurator(dispatch, true)}
           >
             <Cog6ToothIcon className="h-5 w-5 text-blue-gray-500" />
-          </IconButton>
+          </IconButton> */}
+
+          <Menu>
+            <MenuHandler>
+              <IconButton
+                variant="text"
+                color="blue-gray"
+                // onClick={}
+              >
+                <UserCircleIcon className="h-5 w-5 text-blue-gray-500" />
+              </IconButton>
+              {/* <Button>Menu</Button> */}
+            </MenuHandler>
+            <MenuList>
+              <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            </MenuList>
+          </Menu>
         </div>
       </div>
     </Navbar>

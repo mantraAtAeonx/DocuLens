@@ -35,7 +35,10 @@ export function SignIn() {
         toast.success("Logged In Successfully!");
         navigate("/dashboard/home");
         localStorage.setItem("token", res.token);
+        localStorage.setItem("userData", JSON.stringify(res));
         dispatch(setUserData(res));
+        dispatch(setToken(res.token));
+        dispatch(setLoading(false));
       })
       .catch((error) => {
         toast.error(error.response.data.detail);
@@ -98,7 +101,7 @@ export function SignIn() {
               onChange={handleChange}
             />
           </div>
-          <Button type="submit" className="mt-6" fullWidth>
+          <Button type="submit" className="mt-6 h-10" fullWidth>
             Sign In
           </Button>
 
